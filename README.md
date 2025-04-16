@@ -9,18 +9,20 @@
 
 ## 📦 專案架構
 
+```
 streamlog/
-├── backend/         # Flask + SQLAlchemy 專案後端
-│   ├── app/         # Flask 主程式、routes、models 等
-│   └── pyproject.toml  # Poetry 設定檔
-├── frontend/        # HTML + Bootstrap 靜態頁面
+├── backend/              # Flask + SQLAlchemy 專案後端
+│   ├── app/              # Flask 主程式、routes、models 等
+│   └── pyproject.toml    # Poetry 設定檔
+├── frontend/             # HTML + Bootstrap 靜態頁面
 │   ├── index.html
 │   └── assets/
-├── database/        # 資料庫設計文件、SQL 腳本
+├── database/             # 資料庫設計文件、SQL 腳本
 │   ├── schema.sql
 │   └── ER-diagram.png
-├── .gitignore       # 忽略檔案設定
-└── README.md        # 專案說明文件
+├── .gitignore            # 忽略檔案設定
+└── README.md             # 專案說明文件
+```
 
 ---
 
