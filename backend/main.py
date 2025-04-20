@@ -17,4 +17,3 @@ from routers.testLogRoutes import *
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # will be deleted later
