@@ -1,25 +1,24 @@
-# streamlog
-串流平台觀影筆記與分享平台
+# 📦 Streamlog 專案後端環境建置教學（for macOS / WSL）
 
-> 📽️ 串流平台觀影紀錄與分享平台（支援 Netflix、Disney+ 等）
-
-本專案採用 Python + Flask 作為後端，HTML + Bootstrap 作為前端介面，資料庫使用 MySQL，並透過 Poetry 管理 Python 套件與虛擬環境，確保跨平台開發一致性。
+本指南針對第一次建立本地端後端開發環境的使用者，涵蓋 Python / MySQL 安裝、Poetry 建置、Flask 執行、測試 API 等完整流程。
 
 ---
 
-## 📦 專案架構
+## 📁 專案資料夾結構
 
 ```
 streamlog/
 ├── backend/              # Flask + SQLAlchemy 專案後端
 │   ├── app/              # Flask 主程式、routes、models 等
-│   └── pyproject.toml    # Poetry 設定檔
+│   ├── pyproject.toml    # Poetry 設定檔
+│   ├── .env.example      # 資料庫連線設定範例
+│   ├── main.py           # Flask 主程式
+│   └── db/               # schema 與假資料 SQL
+│       ├── schema.sql
+│       └── backup.sql
 ├── frontend/             # HTML + Bootstrap 靜態頁面
 │   ├── index.html
 │   └── assets/
-├── database/             # 資料庫設計文件、SQL 腳本
-│   ├── schema.sql
-│   └── ER-diagram.png
 ├── .gitignore            # 忽略檔案設定
 └── README.md             # 專案說明文件
 ```
@@ -38,127 +37,109 @@ streamlog/
 
 ---
 
-## 🛠️ 環境建置步驟（macOS / Windows WSL 適用）
+## 🔧 一、Python 與虛擬環境建置（pyenv + Poetry）
 
-> 建議先完成 Git 環境與 repo clone，再依以下步驟安裝後端、資料庫等開發環境。
+### ✅ 0. 安裝 pyenv , Poetry
 
-### ✅ 前置需求工具
-
-| 工具             | 建議安裝方式                      | 用途說明 |
-|------------------|----------------------------------|----------|
-| Git              | 官網 / Homebrew / apt            | 版本控制工具 |
-| pyenv            | Homebrew（mac）/ curl（WSL）     | Python 版本管理 |
-| Poetry           | 官方 script 安裝                 | Python 套件與虛擬環境管理 |
-| MySQL            | brew / apt 安裝                  | 專案資料庫 |
-| MySQL Workbench  | 官網下載                         | GUI 管理工具（選用） |
-
----
-
-## 🧰 Python 環境建置（pyenv + Poetry）
-
-### 1. 安裝 pyenv
-
-#### macOS：
-```bash
-brew install pyenv
-```
-
-#### Windows / WSL：
-```bash
-curl https://pyenv.run | bash
-```
-
-> 加入以下到你的 ~/.bashrc 或 ~/.zshrc，儲存後重新啟動終端機：
-```bash
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-```
-
----
-
-### 2. 安裝 Python 版本（3.11.10）
+### ✅ 1. 安裝 Python 版本（3.11.10）
 ```bash
 pyenv install 3.11.10
-pyenv global 3.11.10
+pyenv local 3.11.10
 ```
 
-檢查是否成功：
+確認版本：
 ```bash
-python3 --version
+python3 --version  # 應顯示 Python 3.11.10
 ```
 
----
-
-### 3. 安裝 Poetry
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
-
-設定 Poetry 使用 pyenv 安裝的 Python：
-```bash
-poetry env use $(pyenv which python)
-```
-
----
-
-## 📦 後端專案初始化
-
+### ✅ 2. 安裝 Poetry 並初始化虛擬環境
 ```bash
 cd backend
 poetry install
 ```
 
-若是第一次建立，可以這樣：
+---
+
+## 📁 二、.env 設定
+
+### ✅ 1. 複製 .env.example 成為 .env
 ```bash
-poetry init
-poetry add flask flask_sqlalchemy pymysql
+cp .env.example .env
+```
+
+### ✅ 2. 修改 .env 密碼（與 MySQL root 設定一致）
+```env
+DB_USER=streamlog_user
+DB_PASSWORD=你的密碼
+DB_HOST=localhost
+DB_NAME=streamlog
 ```
 
 ---
 
-## 🛢️ 安裝 MySQL 資料庫
+## 🧱 三、MySQL 資料庫初始化（僅 root 執行一次）
 
-### macOS：
+### ✅ 1. 啟動 MySQL
+
+#### macOS:
 ```bash
-brew install mysql
-brew services start mysql
+mysql.server start
 ```
 
-### WSL（Ubuntu）：
+#### WSL:
 ```bash
-sudo apt update
-sudo apt install mysql-server
 sudo service mysql start
 ```
 
-登入測試：
+### ✅ 2. 修改 schema.sql 中密碼欄位為你的密碼（如有 `CREATE USER`）
+
+### ✅ 3. 匯入資料庫 schema
 ```bash
-mysql -u root -p
+mysql -u root -p < db/schema.sql
+```
+
+### ✅ 4. 匯入假資料
+```bash
+mysql -u root -p < db/backup.sql
 ```
 
 ---
 
-## 📐 初始化資料庫
+## 🚀 四、啟動 Flask 開發伺服器
 
-可執行 `database/schema.sql`：
 ```bash
-mysql -u root -p < database/schema.sql
+poetry run python main.py
 ```
 
-或使用 MySQL Workbench 匯入資料表。
+看到：
+```
+* Running on http://127.0.0.1:5000
+```
+代表啟動成功 ✅
 
 ---
 
-## 🧪 啟動 Flask 伺服器
+## 🔍 五、測試 API 是否成功
 
+### ✅ 測試 GET /api/v1/logs
 ```bash
-cd backend
-poetry shell
-flask run
+curl http://localhost:5000/api/v1/logs
 ```
 
-開啟瀏覽器前往： [http://localhost:5000](http://localhost:5000)
+預期回應：會顯示一筆你組員事先加上的測試資料，例如：
+
+```json
+[
+  {
+    "id": 1,
+    "level": "INFO",
+    "message": "測試日誌訊息",
+    "source": "test",
+    "timestamp": "2025-04-19T17:13:59",
+    "created_at": "2025-04-19T17:13:59"
+  }
+]
+```
 
 ---
 
@@ -170,5 +151,20 @@ flask run
 
 ---
 
-本文件為初次環境建置流程，若有更新，請至 GitHub repo 上查閱最新版。
+🌟 一次設好環境後，之後每次只要執行：
 
+#### macOS:
+```bash
+mysql.server start
+poetry run python main.py
+curl http://localhost:5000/api/v1/logs
+```
+
+#### WSL:
+```bash
+sudo service mysql start
+poetry run python main.py
+curl http://localhost:5000/api/v1/logs
+```
+
+就可以順利開發與測試了！
