@@ -168,3 +168,107 @@ curl http://localhost:5000/api/v1/logs
 ```
 
 就可以順利開發與測試了！
+
+
+# Streamlog 資料庫建立指引
+
+---
+
+## 此段功能目的
+
+這份文件用來指導組員如何將本地 MySQL 資料庫環境，完成 Streamlog 必要的資料表建立。
+
+---
+
+## 操作流程
+
+### 1. 拉取最新代碼
+
+在你自己的工作目錄，先確保 main 是最新：
+
+```bash
+git checkout main
+git pull origin main
+```
+
+---
+
+### 2. 登入 MySQL
+
+開啟你自己的 MySQL，使用下列指令登入：
+
+```bash
+mysql -u root -p
+```
+
+入內後，輸入 root 密碼。
+
+---
+
+### 3. 執行 schema.sql 建立資料表
+
+在 mysql> prompt 上，執行：
+
+```sql
+source backend/db/schema.sql;
+```
+
+(請根據你自己的目錄路徑修正)
+
+---
+
+### 4. 確認資料表建立成功
+
+切換到 streamlog 資料庫：
+
+```sql
+USE streamlog;
+```
+
+查看現有資料表：
+
+```sql
+SHOW TABLES;
+```
+
+應該看到以下四張資料表：
+
+| Tables_in_streamlog |
+|:-------------------|
+| User               |
+| Movie              |
+| WatchLog           |
+| UserNote           |
+
+---
+
+## 資料表說明
+
+### ▶ User
+- 記錄組員基本資料
+- 欄位：user_id (PK), user_name, email, age
+
+### ▶ Movie
+- 記錄電影基礎資料
+- 欄位：movie_id (PK), title, genre, duration, release_year, rating
+
+### ▶ WatchLog
+- 編錄用戶看電影記錄
+- 欄位：watch_id (PK), user_id (FK), movie_id (FK), watch_date, mood, rating
+
+### ▶ UserNote
+- 編錄用戶閱影後留下的笔記/心得
+- 欄位：note_id (PK), user_id (FK), movie_id (FK), content, created_at, like_count
+
+---
+
+## 注意事項
+
+- **source schema.sql 不會自動變更原本的資料，只會增加新表或覆蓋。**
+- **如果重複 source ，請確保有配合 `IF NOT EXISTS` 以防止錯誤。**
+- **如果目前資料庫有舊的 logs 表，請使用 `DROP TABLE logs;` 刪除。**
+
+---
+
+(本文件最後一段不要刪掉，接著各組員可以操作使用。)
+

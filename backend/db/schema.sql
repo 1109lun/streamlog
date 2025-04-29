@@ -1,21 +1,45 @@
--- Note: Please replace 'your_password' with your actual password
-CREATE USER IF NOT EXISTS 'streamlog_user'@'localhost' IDENTIFIED BY 'your_password';
-GRANT ALL PRIVILEGES ON streamlog.* TO 'streamlog_user'@'localhost';
-FLUSH PRIVILEGES;
+    -- create database and table for streamlog
+    CREATE DATABASE IF NOT EXISTS streamlog;
+    USE streamlog;  
 
-CREATE DATABASE IF NOT EXISTS streamlog;
+    -- Create User table
+    CREATE TABLE IF NOT EXISTS User (
+        user_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_name VARCHAR(50) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        age INT NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
-USE streamlog;
+    -- Create Movie table
+    CREATE TABLE IF NOT EXISTS Movie (
+        movie_id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(100) NOT NULL,
+        genre VARCHAR(50) NOT NULL,
+        duration INT ,
+        release_year INT ,
+        rating FLOAT
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
-CREATE TABLE IF NOT EXISTS logs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    level VARCHAR(10) NOT NULL,
-    message TEXT NOT NULL,
-    source VARCHAR(255),
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    -- 建立 WatchLog 表
+    CREATE TABLE IF NOT EXISTS WatchLog (
+        watch_id INT PRIMARY KEY AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        movie_id INT NOT NULL,
+        watch_date DATE,
+        mood VARCHAR(20),
+        rating INT,
+        FOREIGN KEY (user_id) REFERENCES User(user_id),
+        FOREIGN KEY (movie_id) REFERENCES Movie(movie_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE INDEX idx_timestamp ON logs(timestamp);
-CREATE INDEX idx_level ON logs(level);
-CREATE INDEX idx_source ON logs(source);
+    -- 建立 UserNote 表
+    CREATE TABLE IF NOT EXISTS UserNote (
+        note_id INT PRIMARY KEY AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        movie_id INT NOT NULL,
+        content TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        like_count INT DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES User(user_id),
+        FOREIGN KEY (movie_id) REFERENCES Movie(movie_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
