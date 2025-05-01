@@ -7,6 +7,7 @@
         user_id INT AUTO_INCREMENT PRIMARY KEY,
         user_name VARCHAR(50) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
         age INT NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
