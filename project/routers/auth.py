@@ -15,7 +15,11 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
+<<<<<<< HEAD
             session['user_name'] = user['user_name']
+=======
+            session['username'] = user['user_name']
+>>>>>>> a95d41d (年度回顧查詢(不需要自行輸入userid))
             session['user_id'] = user['user_id']
             return redirect(url_for('home.home'))
         else:

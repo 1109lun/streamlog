@@ -10,22 +10,13 @@ def query_form():
 
 @yearly_report_bp.route('/report')
 def show_report():
-    raw_user_id = request.args.get('user_id')
+    user_id = session.get('user_id')
     year = request.args.get('year')
 
-    if not raw_user_id or not year:
-        return "請提供 user_id（或名稱）與 year", 400
-
-    try:
-        user_id = int(raw_user_id)
-    except ValueError:
-        cursor.execute("SELECT user_id FROM User WHERE user_name = %s", (raw_user_id,))
-        result = cursor.fetchone()
-        if result:
-            user_id = result['user_id']
-        else:
-            return f"找不到使用者名稱：{raw_user_id}", 404
-
+    if not user_id:
+        return "請先登入", 401
+    if not year:
+        return "請提供年份", 400
     try:
         year = int(year)
     except ValueError:
