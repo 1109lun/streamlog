@@ -60,9 +60,9 @@ async function loadWatchLogs() {
             const row = `
                 <tr>
                     <td>${log.title || '未知電影'}</td>
-                    <td>${log.watch_date || '未知日期'}</td>
+                    <td>${log.watch_date ? new Date(log.watch_date).toLocaleDateString('zh-TW') : '未知日期'}</td>
                     <td>${getMoodIcon(log.mood)} ${getMoodText(log.mood)}</td>
-                    <td>${log.rating || 0}/10</td>
+                    <td>${(Math.round((log.rating || 0) * 10) / 10).toFixed(1)}/10</td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="showEditWatchLogModal(${log.watch_id})">
                             <i class="bi bi-pencil"></i>

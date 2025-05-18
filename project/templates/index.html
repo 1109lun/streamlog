@@ -29,8 +29,7 @@
               您好，{{ user_name }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">填寫日誌</a></li>
-              <li><a class="dropdown-item" href="#">觀看日誌</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('user_note.list') }}">觀看日誌</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">登出</a></li>
             </ul>
@@ -59,7 +58,7 @@
           </div>
           <div class="col-md-6">
             <label for="year" class="form-label">年份</label>
-            <input type="number" class="form-control" id="year" name="year" value="2024" required>
+            <input type="number" class="form-control" id="year" name="year" value="2025" required>
           </div>
           <div class="col-12">
             <button type="submit" class="btn btn-primary">查看年度回顧</button>

@@ -2,24 +2,16 @@ from flask import Blueprint, request, jsonify, render_template, session
 
 from crud.watch_log import (
     create_watch_log, get_watch_log, update_watch_log, 
-    delete_watch_log, get_all_watch_logs, get_all_movies
+    delete_watch_log, get_all_watch_logs
 )
 
 watch_log_bp = Blueprint('watch_log', __name__)
 
 @watch_log_bp.route('/watch-logs', methods=['GET'])
 def list():
-    username = session.get('user_name')
+    user_name = session.get('user_name')
     user_id = session.get('user_id')
-    return render_template('list.html', username=username, user_id=user_id)
-
-@watch_log_bp.route('/movies', methods=['GET'])
-def get_movies():
-    try:
-        movies = get_all_movies()
-        return jsonify(movies)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    return render_template('list.html', user_name=user_name, user_id=user_id)
 
 @watch_log_bp.route('/api/watch-logs', methods=['GET'])
 def get_all():
