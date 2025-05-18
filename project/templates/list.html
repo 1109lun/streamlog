@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>觀看紀錄列表 - Streamlog</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .mood-icon {
+      font-size: 1.2rem;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Streamlog</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="切換導覽列">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('watch_log.list') }}">觀看紀錄</a>
+          </li>
+          {% if user_name %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              您好，{{ user_name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="#">填寫日誌</a></li>
+              <li><a class="dropdown-item" href="#">觀看日誌</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">登出</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">登入</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>觀看紀錄列表</h2>
+      <button class="btn btn-primary" onclick="showAddWatchLogModal()">
+        <i class="bi bi-plus-circle"></i> 新增觀看紀錄
+      </button>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>電影名稱</th>
+                <th>觀看日期</th>
+                <th>心情</th>
+                <th>評分</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="watchLogList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Watch Log Modal -->
+  <div class="modal fade" id="addWatchLogModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">新增觀看紀錄</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addWatchLogForm">
+            <div class="mb-3">
+              <label class="form-label">電影</label>
+              <select class="form-select" name="movie_id" required></select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">觀看日期</label>
+              <input type="date" class="form-control" name="watch_date" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">心情</label>
+              <select class="form-select" name="mood">
+                <option value="">選擇心情</option>
+                <option value="happy">開心</option>
+                <option value="sad">難過</option>
+                <option value="excited">興奮</option>
+                <option value="relaxed">放鬆</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">評分 (0-10)</label>
+              <input type="number" class="form-control" name="rating" min="0" max="10" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" onclick="addWatchLog()">新增</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Watch Log Modal -->
+  <div class="modal fade" id="editWatchLogModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">編輯觀看紀錄</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editWatchLogForm">
+            <input type="hidden" name="watch_id">
+            <div class="mb-3">
+              <label class="form-label">觀看日期</label>
+              <input type="date" class="form-control" name="watch_date" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">心情</label>
+              <select class="form-select" name="mood">
+                <option value="">選擇心情</option>
+                <option value="happy">開心</option>
+                <option value="sad">難過</option>
+                <option value="excited">興奮</option>
+                <option value="relaxed">放鬆</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">評分 (0-10)</label>
+              <input type="number" class="form-control" name="rating" min="0" max="10" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" onclick="updateWatchLog()">更新</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    window.currentUserId = parseInt("{{ user_id }}");
+  </script>
+  <script src="{{ url_for('static', filename='js/watch_log.js') }}"></script>
+</body>
+</html> 
