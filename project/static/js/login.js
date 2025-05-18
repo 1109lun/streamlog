@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("user_name");
     console.log("登入者是：", username);
   
     const loginSection = document.getElementById('login-section');
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const data = await response.json();
   
           if (response.ok) {
-            localStorage.setItem('username', data.username);
+            localStorage.setItem('user_name', data.user_name);
             window.location.reload();
           } else {
             alert(data.error || '登入失敗');
