@@ -21,26 +21,35 @@
         rating FLOAT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
-    -- 建立 WatchLog 表
+    -- Create WatchLog table
     CREATE TABLE IF NOT EXISTS WatchLog (
         watch_id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
         movie_id INT NOT NULL,
         watch_date DATE,
         mood VARCHAR(20),
-        rating INT,
+        rating FLOAT,
         FOREIGN KEY (user_id) REFERENCES User(user_id),
         FOREIGN KEY (movie_id) REFERENCES Movie(movie_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-    -- 建立 UserNote 表
+    -- Create UserNote table
     CREATE TABLE IF NOT EXISTS UserNote (
         note_id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
         movie_id INT NOT NULL,
         content TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        like_count INT DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES User(user_id),
         FOREIGN KEY (movie_id) REFERENCES Movie(movie_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- Create NoteLike table
+    CREATE TABLE IF NOT EXISTS NoteLike (
+        note_id INT NOT NULL,
+        user_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (note_id, user_id),
+        FOREIGN KEY (note_id) REFERENCES UserNote(note_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
