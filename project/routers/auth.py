@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
-from db.db import db, cursor
 import bcrypt
+
+from db.db import db, cursor
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -14,7 +15,8 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
-            session['username'] = user['user_name']
+            session['user_name'] = user['user_name']
+            session['user_id'] = user['user_id']
             return redirect(url_for('home.home'))
         else:
             return render_template("login.html", error="帳號或密碼錯誤")
@@ -46,5 +48,6 @@ def register():
 
 @auth_bp.route("/logout")
 def logout():
-    session.pop("username", None)
+    session.pop("user_name", None)
+    session.pop("user_id", None)
     return redirect(url_for("auth.login"))

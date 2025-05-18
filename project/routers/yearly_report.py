@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template
+
 from db.db import cursor
 
 yearly_report_bp = Blueprint('yearly_report', __name__)

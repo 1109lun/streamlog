@@ -4,7 +4,7 @@ home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
 def home():
-    if 'username' in session:
-        return render_template('index.html', username=session['username'])
+    if 'user_name' in session:
+        return render_template('index.html', user_name=session['user_name'])
     else:
         return redirect(url_for('auth.login'))
