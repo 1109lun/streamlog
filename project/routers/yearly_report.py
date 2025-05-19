@@ -1,8 +1,12 @@
-from flask import Blueprint, request, render_template
-
+from flask import Blueprint, request, render_template , session
 from db.db import cursor
 
 yearly_report_bp = Blueprint('yearly_report', __name__)
+
+@yearly_report_bp.route("/form")
+def query_form():
+    user_name = session.get("user_name")  
+    return render_template("yearly_query_form.html", user_name=user_name)
 
 @yearly_report_bp.route('/report')
 def show_report():
@@ -26,13 +30,13 @@ def show_report():
         year = int(year)
     except ValueError:
         return "year 必須是整數", 400
+
     cursor.execute("""
         SELECT COUNT(*) AS total_count
         FROM WatchLog
         WHERE user_id = %s AND YEAR(watch_date) = %s
     """, (user_id, year))
     total_count = cursor.fetchone()['total_count'] or 0
-
 
     cursor.execute("""
         SELECT COUNT(DISTINCT M.genre) AS genre_count
@@ -49,7 +53,6 @@ def show_report():
         WHERE W.user_id = %s AND YEAR(W.watch_date) = %s
     """, (user_id, year))
     total_minutes = cursor.fetchone()['total_minutes'] or 0
-
 
     cursor.execute("""
         SELECT ROUND(AVG(rating), 1) AS average_rating
