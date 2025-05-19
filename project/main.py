@@ -8,6 +8,8 @@ from routers.auth import auth_bp
 from routers.home import home_bp
 from routers.yearly_report import yearly_report_bp
 from routers.watch_log import watch_log_bp
+from routers.user_note import user_note_bp
+from routers.movie import movie_bp
 
 load_dotenv()
 
@@ -20,6 +22,8 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(home_bp)
 app.register_blueprint(yearly_report_bp)
 app.register_blueprint(watch_log_bp)
+app.register_blueprint(user_note_bp)
+app.register_blueprint(movie_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
