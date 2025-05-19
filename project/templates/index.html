@@ -12,7 +12,7 @@
   <!-- Navigation bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Streamlog</a>
+      <a class="navbar-brand">Streamlog</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="切換導覽列">
         <span class="navbar-toggler-icon"></span>
@@ -20,9 +20,6 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('watch_log.list') }}">觀看紀錄</a>
-          </li>
           {% if user_name %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -30,6 +27,9 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="{{ url_for('user_note.list') }}">觀看日誌</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('watch_log.list') }}">觀看紀錄</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('yearly_report.query_form') }}">年度回顧查詢</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('home.home') }}">回首頁</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">登出</a></li>
             </ul>
@@ -47,25 +47,6 @@
   <div class="container mt-5">
     <h1 class="mb-3">歡迎回來！</h1>
     <p>請從上方選單選擇您要的功能</p>
-
-    <div class="card mt-4 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title mb-3">查詢年度觀影回顧測試</h5>
-        <form action="{{ url_for('yearly_report.show_report') }}" method="get" class="row g-3">
-          <div class="col-md-6">
-            <label for="user_id" class="form-label">使用者 ID 或名稱</label>
-            <input type="text" class="form-control" id="user_id" name="user_id" placeholder="2 or Bob" required>
-          </div>
-          <div class="col-md-6">
-            <label for="year" class="form-label">年份</label>
-            <input type="number" class="form-control" id="year" name="year" value="2025" required>
-          </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary">查看年度回顧</button>
-          </div>
-        </form>
-      </div>
-    </div>
   </div>
 
   <!-- Bootstrap JS -->
