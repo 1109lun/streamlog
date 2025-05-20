@@ -8,6 +8,7 @@ INSERT INTO User (user_name, email, password, age) VALUES
 INSERT INTO Movie (title, genre, duration, release_year, rating) VALUES
 ('Inception', 'Sci-Fi', 148, 2010, 8.8),
 ('The Godfather', 'Crime', 175, 1972, 9.2);
+('The Goddamn', 'Crime', 175, 1972, 9.2);
 
 -- 插入兩筆觀看紀錄
 INSERT INTO WatchLog (user_id, movie_id, watch_date, mood, rating) VALUES
