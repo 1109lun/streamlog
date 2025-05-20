@@ -49,10 +49,6 @@
         <h5 class="card-title mb-3">查詢年度觀影回顧</h5>
         <form action="{{ url_for('yearly_report.show_report') }}" method="get" class="row g-3">
           <div class="col-md-6">
-            <label for="user_id" class="form-label">使用者 ID 或名稱</label>
-            <input type="text" class="form-control" id="user_id" name="user_id" placeholder="2 or Bob" required>
-          </div>
-          <div class="col-md-6">
             <label for="year" class="form-label">年份</label>
             <input type="number" class="form-control" id="year" name="year" value="2025" required>
           </div>
