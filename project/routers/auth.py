@@ -17,6 +17,7 @@ def login():
         if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
             session['user_name'] = user['user_name']
             session['user_id'] = user['user_id']
+            session['user_name'] = user['user_name']
             return redirect(url_for('home.home'))
         else:
             return render_template("login.html", error="帳號或密碼錯誤")
