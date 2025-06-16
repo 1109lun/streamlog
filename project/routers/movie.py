@@ -4,7 +4,7 @@ from crud.movie import get_all_movies
 
 movie_bp = Blueprint('movie', __name__)
 
-@movie_bp.route('/movies', methods=['GET'])
+@movie_bp.route('/api/movies', methods=['GET'])
 def get_movies():
     try:
         movies = get_all_movies()
