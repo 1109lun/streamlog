@@ -13,7 +13,7 @@
   <!-- Navigation bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand ms-5" href="{{ url_for('home.home') }}">Streamlog</a>
+      <a class="navbar-brand" href="{{ url_for('home.home') }}">Streamlog</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="切換導覽列">
         <span class="navbar-toggler-icon"></span>
@@ -30,7 +30,7 @@
               <li><a class="dropdown-item" href="{{ url_for('user_note.list') }}">觀看日誌</a></li>
               <li><a class="dropdown-item" href="{{ url_for('watch_log.list') }}">觀看紀錄</a></li>
               <li><a class="dropdown-item" href="{{ url_for('yearly_report.query_form') }}">年度回顧查詢</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('home.home') }}">回首頁</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('favorite.list_favorites') }}">收藏清單</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">登出</a></li>
             </ul>

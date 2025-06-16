@@ -18,7 +18,8 @@
         genre VARCHAR(50) NOT NULL,
         duration INT ,
         release_year INT ,
-        rating FLOAT
+        rating FLOAT,
+        image_url VARCHAR(255)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
     -- Create WatchLog table
@@ -52,4 +53,14 @@
         PRIMARY KEY (note_id, user_id),
         FOREIGN KEY (note_id) REFERENCES UserNote(note_id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- Create MovieFavorite table
+    CREATE TABLE IF NOT EXISTS MovieFavorite (
+        user_id INT NOT NULL,
+        movie_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, movie_id),
+        FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+        FOREIGN KEY (movie_id) REFERENCES Movie(movie_id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
