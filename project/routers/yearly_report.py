@@ -144,3 +144,5 @@ def report_data_api():
         "monthly": month_data,
         "emotion": emotion_data
     })
+
+
