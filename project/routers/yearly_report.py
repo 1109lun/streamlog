@@ -100,17 +100,16 @@ def report_data_api():
         "data": [row['count'] for row in month_rows]
     }
 
-
+    # 情緒資料（雷達圖）
     mood_translation = {
-    'excited': '興奮',
-    'thoughtful': '放鬆',
-    'sad': '難過',
-    'happy': '開心',
-    'relaxed': '放鬆'
+        'excited': '興奮',
+        'thoughtful': '放鬆',
+        'sad': '難過',
+        'happy': '開心',
+        'relaxed': '放鬆'
     }
     all_moods = ['開心', '難過', '興奮', '放鬆']
 
-    # 查詢各情緒次數
     cursor.execute("""
         SELECT mood, COUNT(*) AS count
         FROM WatchLog
@@ -119,7 +118,6 @@ def report_data_api():
     """, (user_id, year))
     mood_rows = cursor.fetchall()
 
-    # 翻譯並加總各情緒次數
     mood_count_map = {}
     total_count = 0
     for row in mood_rows:
@@ -130,7 +128,6 @@ def report_data_api():
             mood_count_map[mood_chi] = mood_count_map.get(mood_chi, 0) + count
             total_count += count
 
-    # 計算比例（百分比），避免除以 0
     emotion_data = {
         "labels": all_moods,
         "data": [
@@ -139,10 +136,38 @@ def report_data_api():
         ]
     }
 
+    # 找出使用者最常看的 genre
+    cursor.execute("""
+        SELECT M.genre
+        FROM WatchLog W
+        JOIN Movie M ON W.movie_id = M.movie_id
+        WHERE W.user_id = %s
+        GROUP BY M.genre
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    """, (user_id,))
+    genre_row = cursor.fetchone()
+    favorite_genre = genre_row['genre'] if genre_row else None
+
+    recommended_movies = []
+    if favorite_genre: # 在該類型中找出使用者沒看過的電影
+        cursor.execute("""
+            SELECT M.movie_id, M.title, M.genre, M.rating, M.image_url
+            FROM Movie M
+            WHERE M.genre = %s
+              AND M.movie_id NOT IN (
+                  SELECT movie_id
+                  FROM WatchLog
+                  WHERE user_id = %s
+              )
+            ORDER BY M.rating DESC
+            LIMIT 5
+        """, (favorite_genre, user_id))
+        recommended_movies = cursor.fetchall()
+
     return jsonify({
         "genre": genre_data,
         "monthly": month_data,
-        "emotion": emotion_data
+        "emotion": emotion_data,
+        "recommendations": recommended_movies
     })
-
-

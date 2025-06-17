@@ -108,10 +108,37 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
       });
+
+      // 推薦電影區塊
+      const recommendationsContainer = document.getElementById("recommendations");
+      recommendationsContainer.innerHTML = ""; // 清空舊內容
+
+      if (data.recommendations.length > 0) {
+        data.recommendations.forEach(movie => {
+          const col = document.createElement("div");
+          col.className = "col";
+          col.innerHTML = `
+            <div class="card h-100 recommended-card">
+              <div class="card-body">
+                <h5 class="card-title">${movie.title}</h5>
+                <p class="card-text">類型：${movie.genre}</p>
+              </div>
+              <div class="card-footer text-center text-muted border-0" 
+                  style="background: rgba(255, 255, 255, 0.6); border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <small>⭐ ${movie.rating.toFixed(1)} / 10</small>
+              </div>
+            </div>
+
+          `;
+          recommendationsContainer.appendChild(col);
+        });
+      } else {
+        recommendationsContainer.innerHTML = `
+          <div class="col text-center text-muted">目前沒有推薦的電影，請多看幾部吧！</div>
+        `;
+      }
     })
     .catch(err => {
       console.error('載入圖表資料失敗:', err);
     });
-
-    
 });
