@@ -1,6 +1,6 @@
 async function loadMovieOptions() {
   try {
-    const response = await fetch('/movies');
+    const response = await fetch('/api/movies');
     const movies = await response.json();
     const select = document.querySelector('select[name="movie_id"]');
     select.innerHTML = movies.map(movie => 
