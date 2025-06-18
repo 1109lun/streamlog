@@ -6,17 +6,122 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        body {
+            background: linear-gradient(90deg, #7797b4fe 0%, #8297a342 50%, #8599abfe 100%);
+            color: #000000;
+        }
+
         canvas {
             max-width: 100%;
             height: auto;
         }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 2px solid #0783ff;
+            color: #020202;
+            overflow: visible;
+
+            animation: flashGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes flashGlow {
+            0%, 100% {
+                box-shadow:
+                0 0 12px #0783ff,
+                0 0 24px #0783ff,
+                0 0 48px rgb(254, 254, 255),
+                0 0 55px rgb(255, 255, 255),
+                0 0 70px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow:
+                0 0 24px #0783ff,
+                0 0 48px #0783ff,
+                0 0 96px rgb(255, 255, 255),
+                0 0 100px rgba(7, 131, 255, 0.7),
+                0 0 120px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .list-group-item {
+            background: transparent;
+            color: #000000;
+            border-color: rgb(4, 109, 255);
+        }
+
+        @keyframes floatUpDown {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(25px);
+        }
+        }
+
+        .float-chart {
+        transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+        animation: floatUpDown 4s ease-in-out infinite;
+        z-index: 0;
+        }
+
+        .row:hover .float-chart {
+        transform: scale(0.9);
+        opacity: 0.5;
+        filter: blur(3px);
+        }
+
+        .row:hover .float-chart:hover {
+        opacity: 1;
+        filter: none;
+        z-index: 1;
+        }
+
+
     </style>
 </head>
 <body class="bg-light">
 
+<!-- Navigation bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('home.home') }}">Streamlog</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="切換導覽列">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+        <ul class="navbar-nav">
+          {% if user_name %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              您好，{{ user_name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('user_note.list') }}">觀看日誌</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('watch_log.list') }}">觀看紀錄</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('yearly_report.query_form') }}">年度回顧查詢</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('favorite.list_favorites') }}">收藏清單</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">登出</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">登入</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
 <!-- 使用者資料卡片 -->
 <div class="container py-5">
-    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+    <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
             <h2 class="card-title text-center text-primary mb-4">
                 {{ user_name }} 的 {{ year }} 年度觀影回顧
@@ -41,22 +146,29 @@
 
 <!-- 圖表區 -->
 <div class="container py-5">
-    <h3 class="text-center fw-bold mb-4">回顧</h3>
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <canvas id="genreChart"></canvas>
-            <p class="fw-bold mt-3">觀影類型分佈</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <canvas id="monthlyChart"></canvas>
-            <p class="fw-bold mt-3">每月觀看與分享次數</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <canvas id="emotionChart"></canvas>
-            <p class="fw-bold mt-3">情緒雷達分析</p>
-        </div>
+  <h3 class="text-center fw-bold mb-4">回顧</h3>
+  <div class="row text-center">
+    <div class="col-md-4 mb-4 float-chart" style="animation-delay: 0s;">
+      <canvas id="genreChart"></canvas>
+      <p class="fw-bold mt-3">觀影類型分佈</p>
     </div>
+    <div class="col-md-4 mb-4 float-chart" style="animation-delay: 0.5s;">
+      <canvas id="monthlyChart"></canvas>
+      <p class="fw-bold mt-3">每月觀看與分享次數</p>
+    </div>
+    <div class="col-md-4 mb-4 float-chart" style="animation-delay: 1s;">
+      <canvas id="emotionChart"></canvas>
+      <p class="fw-bold mt-3">情緒雷達分析</p>
+    </div>
+  </div>
 </div>
+
+
+  <!-- 推薦區 -->
+  <div class="container py-4">
+    <h3 class="text-center fw-bold mb-3">為你推薦</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center" id="recommendations"></div>
+  </div>
 
 <!-- JS 引入 -->
 <script>
